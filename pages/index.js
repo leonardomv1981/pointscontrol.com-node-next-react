@@ -1,5 +1,5 @@
 function Home() {
-  return <h1>Mensagem nova, definitiva</h1>;
+  return <h1>Under construction</h1>;
 }
 
 export default Home;
