@@ -3,24 +3,29 @@ import orchestrator from "tests/orchestrator.js";
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
 });
-test("GET to /api/v1/status should return 200", async () => {
-  const response = await fetch("http://localhost:3000/api/v1/status");
 
-  expect(response.status).toBe(200);
+describe("GET /api/v1/status", () => {
+  describe("anonymous user", () => {
+    test("Retrieving current system status", async () => {
+      const response = await fetch("http://localhost:3000/api/v1/status");
 
-  const responseBody = await response.json();
-  // console.log(responseBody);
-  expect(responseBody.updated_at).toBeDefined();
+      expect(response.status).toBe(200);
 
-  const parsedUpdatedAt = new Date(responseBody.updated_at).toISOString();
-  expect(responseBody.updated_at).toEqual(parsedUpdatedAt);
+      const responseBody = await response.json();
+      // console.log(responseBody);
+      expect(responseBody.updated_at).toBeDefined();
 
-  const version = responseBody.dependencies.database.version;
-  expect(version).toEqual("16.13");
+      const parsedUpdatedAt = new Date(responseBody.updated_at).toISOString();
+      expect(responseBody.updated_at).toEqual(parsedUpdatedAt);
 
-  expect(responseBody.dependencies.database.max_connections).toEqual(100);
-  expect(responseBody.dependencies.database.used_connections).toEqual(1);
+      const version = responseBody.dependencies.database.version;
+      expect(version).toEqual("16.13");
 
-  // const usedConnections = responseBody.used_connections;
-  // expect(usedConnections).toEqual(0);
+      expect(responseBody.dependencies.database.max_connections).toEqual(100);
+      expect(responseBody.dependencies.database.used_connections).toEqual(1);
+      // const usedConnections = responseBody.used_connections;
+      // expect(usedConnections).toEqual(0);
+      //conferir qual teste falta aqui
+    });
+  });
 });
