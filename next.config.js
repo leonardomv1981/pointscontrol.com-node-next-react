@@ -4,5 +4,5 @@ const nextConfig = {
     "/api/v1/migrations": ["./infra/migrations/**/*"],
   },
 };
-
+//comentario
 module.exports = nextConfig;
