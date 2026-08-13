@@ -30,9 +30,13 @@ function UpdatedData() {
     <>
       <div>Última atualização {updatedAtText}</div>
       <h2>Dados do servidor:</h2>
-      <div>Versão: {dataStatus.version}</div>
-      <div>Max_connections: {dataStatus.max_connections}</div>
-      <div>Conexões em uso: {dataStatus.used_connections}</div>
+      {dataStatus && (
+        <div>
+          <div>Versão: {dataStatus.version}</div>
+          <div>Max_connections: {dataStatus.max_connections}</div>
+          <div>Conexões em uso: {dataStatus.used_connections}</div>
+        </div>
+      )}
     </>
   );
 }
