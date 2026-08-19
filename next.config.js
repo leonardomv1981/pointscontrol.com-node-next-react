@@ -1,7 +1,5 @@
 module.exports = {
-  experimental: {
-    outputFileTracingIncludes: {
-      "*": ["infra/migrations/**/*"],
-    },
+  outputFileTracingIncludes: {
+    "*": ["infra/migrations/**/*"],
   },
 };
