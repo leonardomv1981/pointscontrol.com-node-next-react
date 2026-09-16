@@ -63,7 +63,6 @@ async function createSession(userId) {
 }
 
 async function deleteAllEmail() {
-  console.log(emailHttpUrl);
   await fetch(`${emailHttpUrl}/messages`, { method: "DELETE" });
 }
 
