@@ -71,12 +71,19 @@ async function getLastEmail() {
     method: "GET",
   });
   const emailListBody = await emailListResponse.json();
+
   const lastEmailItem = emailListBody.pop();
 
+  if (!lastEmailItem) {
+    return null;
+  }
+
   //mailCatcher uses .plain to get text of email or .html to get html of email
+
   const emailTextResponse = await fetch(
     `${emailHttpUrl}/messages/${lastEmailItem.id}.plain`,
   );
+
   const emailTextBody = await emailTextResponse.text();
 
   lastEmailItem.text = emailTextBody;
