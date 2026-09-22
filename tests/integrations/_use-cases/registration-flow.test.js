@@ -1,3 +1,4 @@
+import webserver from "infra/webserver";
 import activation from "models/activation.js";
 import orchestrator from "tests/orchestrator";
 
@@ -43,14 +44,24 @@ describe("Use case: registration Flow (all sucessful)", () => {
   test("Send activation email", async () => {
     const lastEmail = await orchestrator.getLastEmail();
 
-    const activationToken = await activation.findOneByUserId(
-      createUserREsponseBody.id,
-    );
     expect(lastEmail.sender).toBe("<pointscontrolapp@gmail.com>");
     expect(lastEmail.recipients[0]).toBe("<registration.flow@dousuario.com>");
     expect(lastEmail.subject).toBe("Ative seu cadastro!");
     expect(lastEmail.text).toContain("registrationFlow");
-    expect(lastEmail.text).toContain(activationToken.id);
+
+    const activationTokenId = orchestrator.extractUUID(lastEmail.text);
+
+    expect(lastEmail.text).toContain(
+      `${webserver.origin}/cadastro/ativar/${activationTokenId}`,
+    );
+
+    const activationTokenObject =
+      await activation.findOneValidById(activationTokenId);
+
+    expect(activationTokenObject.user_id).toBe(createUserREsponseBody.id);
+    expect(activationTokenObject.used_at).toBe(null);
+
+    // expect(lastEmail.text).toContain(activationToken.id);
   });
 
   test("Activate account", async () => {});

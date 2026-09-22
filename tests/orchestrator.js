@@ -66,6 +66,11 @@ async function deleteAllEmail() {
   await fetch(`${emailHttpUrl}/messages`, { method: "DELETE" });
 }
 
+function extractUUID(text) {
+  const match = text.match(/[0-9a-fA-F-]{36}/);
+  return match ? match[0] : null;
+}
+
 async function getLastEmail() {
   const emailListResponse = await fetch(`${emailHttpUrl}/messages`, {
     method: "GET",
@@ -98,6 +103,7 @@ const orchestrator = {
   createSession,
   deleteAllEmail,
   getLastEmail,
+  extractUUID,
 };
 
 export default orchestrator;
