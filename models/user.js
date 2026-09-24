@@ -130,6 +130,30 @@ async function create(userInputValues) {
   }
 }
 
+async function setFeature(userId, features) {
+  const updatedUser = await runUpdateQuery(userId, features);
+  return updatedUser;
+
+  async function runUpdateQuery(userId, features) {
+    const results = await database.query({
+      text: `
+        UPDATE
+          users
+        SET
+          features = $2,
+          updated_at = NOW()
+        WHERE
+          id = $1
+        RETURNING
+          *
+      ;`,
+      values: [userId, features],
+    });
+
+    return results.rows[0];
+  }
+}
+
 async function update(username, userInputValues) {
   const currentUser = await findOneByUsername(username);
 
@@ -230,6 +254,7 @@ const user = {
   findOneByUsername,
   findOneByEmail,
   update,
+  setFeature,
 };
 
 export default user;

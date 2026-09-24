@@ -1,7 +1,8 @@
 import database from "infra/database";
 import email from "infra/email.js";
-import { NotFoundError } from "infra/errors";
+import { NotFoundError, UnauthorizedError } from "infra/errors";
 import webserver from "infra/webserver.js";
+import user from "models/user.js";
 
 async function create(userId) {
   const expiresAt = new Date(Date.now() + 60 * 15 * 1000); // 15 minutes
@@ -23,6 +24,36 @@ async function create(userId) {
 
     return results.rows[0];
   }
+}
+
+async function findAndUseToken(activationTokenId) {
+  console.log("====== vai fazer query");
+  const results = await database.query({
+    text: `
+    UPDATE
+      user_activation_tokens
+    SET
+      used_at = NOW(),
+      updated_at = NOW()
+    WHERE
+      id = $1
+      AND 
+      used_at IS NULL
+      AND
+      expires_at > NOW()
+    RETURNING
+      *
+    ;`,
+    values: [activationTokenId],
+  });
+
+  if (results.rowCount === 0) {
+    throw new UnauthorizedError({
+      message: "Token inválido",
+    });
+  }
+
+  return results.rows[0];
 }
 
 async function findOneValidById(tokenId) {
@@ -59,14 +90,21 @@ async function sendEmailToUser(user, activationToken) {
     subject: "Ative seu cadastro!",
     text: `${user.username}, clique no link abaixo para ativar seu cadastro no Points Control.
     
-${webserver.origin}/cadastro/ativar/${activationToken.id}`,
+${webserver.origin}/activations/${activationToken.id}`,
   });
+}
+
+async function activateUserById(userId) {
+  const activatedUser = await user.setFeature(userId, ["create:session"]);
+  return activatedUser;
 }
 
 const activation = {
   create,
   findOneValidById,
   sendEmailToUser,
+  findAndUseToken,
+  activateUserById,
 };
 
 export default activation;
