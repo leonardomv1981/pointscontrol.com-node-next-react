@@ -27,7 +27,6 @@ async function create(userId) {
 }
 
 async function findAndUseToken(activationTokenId) {
-  console.log("====== vai fazer query");
   const results = await database.query({
     text: `
     UPDATE
