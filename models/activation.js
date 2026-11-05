@@ -94,7 +94,7 @@ ${webserver.origin}/activations/${activationToken.id}`,
 }
 
 async function activateUserById(userId) {
-  const activatedUser = await user.setFeature(userId, []);
+  const activatedUser = await user.setFeature(userId, ["create:session"]);
   return activatedUser;
 }
 
